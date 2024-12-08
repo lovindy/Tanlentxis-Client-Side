@@ -23,7 +23,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     // Runtime Configuration
     const config = useRuntimeConfig()
-    const API_BASE_URL = config.public.apiBase || 'http://localhost:8080/api/v1'
+    const API_BASE_URL = config.public.apiBase || 'https://talentexis.seangdev.site/api/v1/'
 
     /**
      * Computed property to check if user is authenticated
