@@ -8,7 +8,7 @@ export default defineNuxtConfig({
     compatibilityDate: '2024-12-02',
     runtimeConfig: {
         public: {
-            apiBase: 'http://localhost:8080/api/v1'
+            apiBase: process.env.API_BASE_URL || 'https://talentexis.seangdev.site/api/v1/'
         }
     },
     devtools: {enabled: true},
