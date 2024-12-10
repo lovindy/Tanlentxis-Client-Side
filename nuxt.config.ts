@@ -20,7 +20,7 @@ export default defineNuxtConfig({
         // Configure app head metadata
         head: {
             title: 'Talentexis',
-            titleTemplate: '%s - Your App Name',
+            titleTemplate: '%s - Talentexis',
             meta: [
                 {charset: 'utf-8'},
                 {name: 'viewport', content: 'width=device-width, initial-scale=1'},
