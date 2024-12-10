@@ -42,18 +42,19 @@ export default defineNuxtConfig({
   css: [
     // Global CSS files
     "@/assets/css/main.css",
+    "@/assets/css/smooth-scroll.css",
   ],
 
   // Build Configuration
   build: {
-    transpile: ["vue-toastification"],
+    transpile: ["vue-toastification", "@studio-freight/lenis"],
   },
 
   components: true,
 
   vue: {
     compilerOptions: {
-      isCustomElement: (tag) => tag === "LoadingScreen", 
+      isCustomElement: (tag) => tag === "LoadingScreen",
     },
   },
 });

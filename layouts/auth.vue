@@ -10,7 +10,7 @@
       </button>
     </div>
     <main class="flex-grow flex items-center justify-center">
-      <slot />
+      <NuxtPage />
     </main>
   </div>
 </template>
