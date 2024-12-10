@@ -1,4 +1,4 @@
-<!-- pages/unauthorized.vue -->
+<!-- pages/notfound.vue -->
 <template>
   <div
     class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100"
@@ -7,13 +7,13 @@
       <!-- Error Card -->
       <div class="bg-white rounded-lg shadow-xl overflow-hidden">
         <!-- Top Color Bar -->
-        <div class="h-2 bg-red-500"></div>
+        <div class="h-2 bg-blue-500"></div>
 
         <div class="p-8">
           <!-- Icon -->
           <div class="mb-6 flex justify-center">
-            <div class="p-3 bg-red-100 rounded-full">
-              <LucideLock class="w-12 h-12 text-red-500" />
+            <div class="p-3 bg-blue-100 rounded-full">
+              <LucideSearch class="w-12 h-12 text-blue-500" />
             </div>
           </div>
 
@@ -21,12 +21,12 @@
           <h1
             class="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-2"
           >
-            Access Denied
+            Page Not Found
           </h1>
 
           <p class="text-gray-600 text-center mb-8">
-            You don't have permission to access this page. Please contact your
-            administrator if you believe this is an error.
+            The page you are looking for doesn't exist or has been moved. Check
+            the URL or try navigating back.
           </p>
 
           <!-- Actions -->
@@ -41,12 +41,12 @@
             </UButton>
 
             <UButton
-              @click="handleContactSupport"
-              color="red"
+              @click="handleReport"
+              color="blue"
               variant="soft"
-              icon="i-lucide-mail"
+              icon="i-lucide-flag"
             >
-              Contact Support
+              Report Issue
             </UButton>
           </div>
         </div>
@@ -54,12 +54,12 @@
 
       <!-- Additional Help Text -->
       <p class="text-sm text-gray-500 text-center mt-6">
-        Error Code: 403 | If you continue to experience issues, please email
+        Error Code: 404 | If you believe this is a mistake, please
         <a
           href="mailto:support@talentexis.com"
-          class="text-red-600 hover:text-red-700"
+          class="text-blue-600 hover:text-blue-700"
         >
-          support@talentexis.com
+          let us know
         </a>
       </p>
     </div>
@@ -67,7 +67,7 @@
 </template>
 
 <script setup>
-import { LucideLock } from "lucide-vue-next";
+import { LucideSearch } from "lucide-vue-next";
 
 const { $pinia } = useNuxtApp();
 const auth = useAuthStore($pinia);
@@ -77,18 +77,13 @@ const handleReturn = () => {
   navigateTo(auth.getDashboardRoute);
 };
 
-const handleContactSupport = () => {
-  // Implement this to either:
-  // 1. Open a support ticket modal
-  // 2. Navigate to a contact form
-  // 3. Open email client
-
+const handleReport = () => {
   window.location.href =
-    "mailto:support@talentexis.com?subject=Access%20Required%20-%20Unauthorized%20Access";
+    "mailto:support@talentexis.com?subject=404%20Error%20Report";
 
   addToast({
-    title: "Support Email",
-    description: "Opening your email client to contact support",
+    title: "Report Issue",
+    description: "Opening your email client to report the issue",
     color: "gray",
   });
 };

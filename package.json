@@ -20,6 +20,7 @@
     "@vee-validate/zod": "^4.14.7",
     "dotenv": "^16.4.7",
     "lenis": "^1.1.18",
+    "lucide-vue-next": "^0.468.0",
     "nuxt": "^3.14.1592",
     "persist": "^0.2.7",
     "pinia": "^2.2.8",
