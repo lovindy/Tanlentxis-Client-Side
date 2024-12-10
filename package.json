@@ -18,6 +18,7 @@
     "@vee-validate/nuxt": "^4.14.7",
     "@vee-validate/yup": "^4.14.7",
     "@vee-validate/zod": "^4.14.7",
+    "dotenv": "^16.4.7",
     "lenis": "^1.1.18",
     "nuxt": "^3.14.1592",
     "persist": "^0.2.7",
