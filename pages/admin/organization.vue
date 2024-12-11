@@ -6,6 +6,7 @@
       <h1 class="text-2xl font-bold">Organizations</h1>
       <button
         class="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-600"
+        @click="createOrganization"
       >
         <LucidePlus class="w-4 h-4 mr-2" />
         Add Organization
@@ -75,7 +76,7 @@
                 </div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                {{ org.employees }}
+                {{ org.owner.username }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <span
@@ -92,7 +93,7 @@
                 {{ org.industry }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                {{ org.joinedDate }}
+                {{ org.createdAt }}
               </td>
               <td
                 class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
@@ -110,45 +111,24 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from 'vue';
 import {
   LucideSearch,
   LucidePlus,
   LucideMoreVertical,
   LucideBuilding2,
-} from "lucide-vue-next";
+} from 'lucide-vue-next';
+import { useOrganization } from '@/composables/useOrganization';
 
-// Static organizations data
-const organizations = ref([
-  {
-    id: 1,
-    name: "Tech Corp Inc.",
-    employees: 150,
-    status: "active",
-    industry: "Technology",
-    joinedDate: "2023-01-15",
-  },
-  {
-    id: 2,
-    name: "Digital Solutions Ltd",
-    employees: 75,
-    status: "active",
-    industry: "Consulting",
-    joinedDate: "2023-03-22",
-  },
-  {
-    id: 3,
-    name: "Innovate Co",
-    employees: 45,
-    status: "pending",
-    industry: "Healthcare",
-    joinedDate: "2023-06-10",
-  },
-]);
+const { getOrganizations, createOrganization } = useOrganization();
 
-const searchQuery = ref("");
+const organizations = ref<OrganizationResponse[]>([]);
+const searchQuery = ref('');
 
-// Computed property for filtered organizations
+onMounted(async () => {
+  organizations.value = await getOrganizations();
+});
+
 const filteredOrganizations = computed(() => {
   return organizations.value.filter(
     (org) =>
@@ -157,8 +137,8 @@ const filteredOrganizations = computed(() => {
   );
 });
 
-// Layout configuration
-definePageMeta({
-  layout: "dashboard",
-});
+const createOrganizationHandler = async () => {
+  await createOrganization('New Organization', '123 Main St', 'ORG-2024-001');
+  organizations.value = await getOrganizations();
+};
 </script>
