@@ -2,6 +2,7 @@
 import { ref, computed } from "vue";
 import { defineStore } from "pinia";
 import type { AuthResponse } from "@/types/auth";
+import { useOrganization } from "@/composables/useOrganization";
 
 /**
  * Authentication store using Pinia
@@ -269,11 +270,15 @@ export const useAuthStore = defineStore("auth", () => {
     },
   };
 
+  const { getOrganization, createOrganization } = useOrganization();
+
   // Return store interface
   return {
     ...state,
     isAuthenticated,
     getDashboardRoute,
+    getOrganization,
+    createOrganization,
     ...authApi,
   };
 });
