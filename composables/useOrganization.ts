@@ -1,24 +1,23 @@
 // composables/useOrganization.ts
-import { useAuthStore } from "@/composables/useAuth";
 import type { OrganizationResponse } from "@/types/organization";
 
 export const useOrganization = () => {
-  const authStore = useAuthStore();
+  const config = useRuntimeConfig();
+  const API_BASE_URL = config.public.apiBase || "http://localhost:8080/api/v1";
 
   const getOrganizations = async (): Promise<OrganizationResponse[]> => {
     try {
       const response = await $fetch<OrganizationResponse[]>(
-        "/api/v1/organizations",
+        `${API_BASE_URL}/organizations/admin`,
         {
-          headers: {
-            Authorization: `Bearer ${authStore.token}`,
-          },
+          method: "GET",
+          credentials: "include",
         }
       );
       return response;
     } catch (error) {
       console.error("Error fetching organizations:", error);
-      return [];
+      throw error;
     }
   };
 
@@ -27,17 +26,16 @@ export const useOrganization = () => {
   ): Promise<OrganizationResponse | null> => {
     try {
       const response = await $fetch<OrganizationResponse>(
-        `/api/v1/organizations/${id}`,
+        `${API_BASE_URL}/organizations/${id}`,
         {
-          headers: {
-            Authorization: `Bearer ${authStore.token}`,
-          },
+          method: "GET",
+          credentials: "include",
         }
       );
       return response;
     } catch (error) {
-      console.error("Error fetching organization:", error);
-      return null;
+      console.error(`Error fetching organization ${id}:`, error);
+      throw error;
     }
   };
 
@@ -48,19 +46,17 @@ export const useOrganization = () => {
   ): Promise<OrganizationResponse | null> => {
     try {
       const response = await $fetch<OrganizationResponse>(
-        "/api/v1/organizations",
+        `${API_BASE_URL}/organizations`,
         {
           method: "POST",
-          headers: {
-            Authorization: `Bearer ${authStore.token}`,
-          },
-          body: { name, address, registrationNumber },
+          credentials: "include",
+          body: JSON.stringify({ name, address, registrationNumber }),
         }
       );
       return response;
     } catch (error) {
       console.error("Error creating organization:", error);
-      return null;
+      throw error;
     }
   };
 
