@@ -1,4 +1,3 @@
-<!-- pages/admin/organization.vue -->
 <template>
   <div class="space-y-6">
     <!-- Header -->
@@ -6,7 +5,7 @@
       <h1 class="text-2xl font-bold">Organizations</h1>
       <button
         class="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-600"
-        @click="createOrganization"
+        @click="openCreateOrganizationModal"
       >
         <LucidePlus class="w-4 h-4 mr-2" />
         Add Organization
@@ -15,6 +14,7 @@
 
     <!-- Search and Table -->
     <div class="bg-white rounded-lg shadow">
+      <!-- Search Input -->
       <div class="p-4 border-b">
         <div class="relative">
           <LucideSearch
@@ -29,6 +29,7 @@
         </div>
       </div>
 
+      <!-- Organizations Table -->
       <div class="overflow-x-auto">
         <table class="w-full">
           <thead class="bg-gray-50">
@@ -41,22 +42,17 @@
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Employees
+                Owner
               </th>
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Status
+                Registration Number
               </th>
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Industry
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Joined Date
+                Created Date
               </th>
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -72,6 +68,7 @@
                   <LucideBuilding2 class="w-8 h-8 text-gray-400 mr-3" />
                   <div>
                     <div class="font-medium">{{ org.name }}</div>
+                    <div class="text-sm text-gray-500">{{ org.address }}</div>
                   </div>
                 </div>
               </td>
@@ -79,66 +76,237 @@
                 {{ org.owner.username }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <span
-                  :class="`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    org.status === 'active'
-                      ? 'bg-green-100 text-green-800'
-                      : 'bg-yellow-100 text-yellow-800'
-                  }`"
-                >
-                  {{ org.status }}
-                </span>
+                {{ org.registrationNumber }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                {{ org.industry }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                {{ org.createdAt }}
+                {{ formatDate(org.createdAt) }}
               </td>
               <td
                 class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
               >
-                <button class="text-gray-400 hover:text-gray-500">
-                  <LucideMoreVertical class="w-5 h-5" />
-                </button>
+                <div class="flex items-center space-x-2">
+                  <button
+                    @click="viewOrganizationDetails(org.id)"
+                    class="text-blue-500 hover:text-blue-700"
+                  >
+                    <LucideEye class="w-5 h-5" />
+                  </button>
+                </div>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
+
+    <!-- Create Organization Modal -->
+    <div
+      v-if="showCreateModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+    >
+      <div class="bg-white rounded-lg p-6 w-96">
+        <h2 class="text-xl font-bold mb-4">Create New Organization</h2>
+        <form @submit.prevent="submitCreateOrganization">
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700"
+              >Organization Name</label
+            >
+            <input
+              v-model="newOrganization.name"
+              type="text"
+              required
+              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+            />
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700"
+              >Address</label
+            >
+            <input
+              v-model="newOrganization.address"
+              type="text"
+              required
+              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+            />
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700"
+              >Registration Number</label
+            >
+            <input
+              v-model="newOrganization.registrationNumber"
+              type="text"
+              required
+              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+            />
+          </div>
+          <div class="flex justify-end space-x-2">
+            <button
+              type="button"
+              @click="closeCreateOrganizationModal"
+              class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="bg-blue-500 text-white px-4 py-2 rounded-lg"
+            >
+              Create
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Organization Details Modal -->
+    <div
+      v-if="selectedOrganization"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+    >
+      <div class="bg-white rounded-lg p-6 w-96">
+        <h2 class="text-xl font-bold mb-4">Organization Details</h2>
+        <div class="space-y-2">
+          <p><strong>Name:</strong> {{ selectedOrganization.name }}</p>
+          <p><strong>Address:</strong> {{ selectedOrganization.address }}</p>
+          <p>
+            <strong>Registration Number:</strong>
+            {{ selectedOrganization.registrationNumber }}
+          </p>
+          <p>
+            <strong>Created At:</strong>
+            {{ formatDate(selectedOrganization.createdAt) }}
+          </p>
+          <p>
+            <strong>Owner:</strong> {{ selectedOrganization.owner.username }}
+          </p>
+        </div>
+        <div class="mt-6 flex justify-end">
+          <button
+            @click="selectedOrganization = null"
+            class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted } from "vue";
 import {
   LucideSearch,
   LucidePlus,
-  LucideMoreVertical,
   LucideBuilding2,
-} from 'lucide-vue-next';
-import { useOrganization } from '@/composables/useOrganization';
+  LucideEye,
+} from "lucide-vue-next";
+import { useOrganization } from "@/composables/useOrganization";
 
-const { getOrganizations, createOrganization } = useOrganization();
+// Destructure organization methods
+const { getOrganizations, createOrganization, getOrganization } =
+  useOrganization();
 
-const organizations = ref<OrganizationResponse[]>([]);
-const searchQuery = ref('');
+// State management
+const organizations = ref([]);
+const searchQuery = ref("");
+const showCreateModal = ref(false);
+const selectedOrganization = ref(null);
 
-onMounted(async () => {
-  organizations.value = await getOrganizations();
+// New organization form data
+const newOrganization = ref({
+  name: "",
+  address: "",
+  registrationNumber: "",
 });
 
+// Fetch organizations on component mount
+onMounted(async () => {
+  await fetchOrganizations();
+});
+
+// Fetch organizations method
+const fetchOrganizations = async () => {
+  try {
+    organizations.value = await getOrganizations();
+  } catch (error) {
+    console.error("Failed to fetch organizations:", error);
+    // Optionally show error toast/notification
+  }
+};
+
+// Filtered organizations based on search query
 const filteredOrganizations = computed(() => {
+  if (!searchQuery.value) return organizations.value;
+
+  const query = searchQuery.value.toLowerCase();
   return organizations.value.filter(
     (org) =>
-      org.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      org.industry.toLowerCase().includes(searchQuery.value.toLowerCase())
+      org.name.toLowerCase().includes(query) ||
+      org.registrationNumber.toLowerCase().includes(query)
   );
 });
 
-const createOrganizationHandler = async () => {
-  await createOrganization('New Organization', '123 Main St', 'ORG-2024-001');
-  organizations.value = await getOrganizations();
+// Open create organization modal
+const openCreateOrganizationModal = () => {
+  showCreateModal.value = true;
 };
+
+// Close create organization modal
+const closeCreateOrganizationModal = () => {
+  showCreateModal.value = false;
+  // Reset form
+  newOrganization.value = {
+    name: "",
+    address: "",
+    registrationNumber: "",
+  };
+};
+
+// Submit create organization
+const submitCreateOrganization = async () => {
+  try {
+    const createdOrg = await createOrganization(
+      newOrganization.value.name,
+      newOrganization.value.address,
+      newOrganization.value.registrationNumber
+    );
+
+    if (createdOrg) {
+      // Refresh organizations list
+      await fetchOrganizations();
+      // Close modal
+      closeCreateOrganizationModal();
+      // Optionally show success toast/notification
+    }
+  } catch (error) {
+    console.error("Failed to create organization:", error);
+    // Optionally show error toast/notification
+  }
+};
+
+// View organization details
+const viewOrganizationDetails = async (orgId) => {
+  try {
+    selectedOrganization.value = await getOrganization(orgId);
+  } catch (error) {
+    console.error("Failed to fetch organization details:", error);
+    // Optionally show error toast/notification
+  }
+};
+
+// Date formatting utility
+const formatDate = (dateString) => {
+  return new Date(dateString).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+
+// Set page layout metadata
+definePageMeta({
+  layout: "dashboard",
+});
 </script>
