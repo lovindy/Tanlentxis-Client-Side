@@ -1,9 +1,7 @@
 // composables/useOrganization.ts
-import { useAuthStore } from "@/composables/useAuth";
 import type { OrganizationResponse } from "@/types/organization";
 
 export const useOrganization = () => {
-  const authStore = useAuthStore();
   const config = useRuntimeConfig();
   const API_BASE_URL = config.public.apiBase || "http://localhost:8080/api/v1";
 
@@ -13,16 +11,13 @@ export const useOrganization = () => {
         `${API_BASE_URL}/organizations/admin`,
         {
           method: "GET",
-          credentials: "include", // for session-based auth
-          headers: {
-            Authorization: `Bearer ${authStore.token}`,
-          },
+          credentials: "include",
         }
       );
       return response;
     } catch (error) {
       console.error("Error fetching organizations:", error);
-      throw error; // Rethrow to allow handling in component
+      throw error;
     }
   };
 
@@ -35,9 +30,6 @@ export const useOrganization = () => {
         {
           method: "GET",
           credentials: "include",
-          headers: {
-            Authorization: `Bearer ${authStore.token}`,
-          },
         }
       );
       return response;
@@ -58,10 +50,6 @@ export const useOrganization = () => {
         {
           method: "POST",
           credentials: "include",
-          headers: {
-            Authorization: `Bearer ${authStore.token}`,
-            "Content-Type": "application/json",
-          },
           body: JSON.stringify({ name, address, registrationNumber }),
         }
       );
